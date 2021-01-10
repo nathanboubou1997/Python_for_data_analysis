@@ -1,0 +1,55 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2577
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Projet python for data analysis\
+\
+T\'e2ches \'e0 effectuer et conclusion\
+\
+Problem:\
+  The "spam" concept is diverse: advertisements for products/web\
+  sites, make money fast schemes, chain letters, pornography...\
+  Our collection of spam e-mails came from individuals who had filed spam.  \
+  Our collection of non-spam e-mails came from filed work and personal e-mails\
+\
+Dataset: \
+  Number of Instances: 4601 (1813 Spam = 39.4%)\
+  Number of Attributes: 58 (57 continuous, 1 nominal class label)\
+  Spam	  1813  (39.4%)\
+  Non-Spam  2788  (60.6%)\
+\
+Attribute Information:\
+  The last column of 'spambase.data' denotes whether the e-mail was \
+  considered spam (1) or not (0)\
+  - 48 continuous real [0,100] attributes of type word_freq_WORD = percentage of words in the e-mail that match WORD, characters or end-of-string.\
+  - 6 continuous real [0,100] attributes of type char_freq_CHAR = percentage of characters in the e-mail that match CHAR,\
+  - 1 continuous real [1,...] attribute of type capital_run_length_average = average length of uninterrupted sequences of capital letters\
+  - 1 continuous integer [1,...] attribute of type capital_run_length_longest = length of longest uninterrupted sequence of capital letters\
+  - 1 continuous integer [1,...] attribute of type capital_run_length_total = total number of capital letters in the e-mail\
+  - 1 nominal \{0,1\} class attribute of type spam = denotes whether the e-mail was considered spam (1) or not (0), \
+\
+Fonctionnement de l'API:\
+  API flask r\'e9alis\'e9e en python.\
+  Pour Tester l'API vous devez d'abord lancer le fichier flask_server.py\
+  Par la suite vous pouvez tester une requete en executant le fichier request.py\
+  Nous avons aussi d\'e9velopper une page web qui permet \'e0 un utilisateur de remplir une zone de texte \
+  Puis en appuyant sur le bouton extract de remplir la liste des champs num\'e9riques qui constitue les donn\'e9es d'un mail selon notre datasets \
+  En revanche, la connexion entre la page web et l'api semble ne pas fonctionner exactement comme pr\'e9vu en raison d'une mauvaise structure de requ\'eate.\
+  Nous allons essayer de r\'e9parer ce bug le plus vite possible\
+  \
+Conclusion:\
+\
+  Apr\'e8s avoir bien analys\'e9 et visualis\'e9 les donn\'e9es concernant le filtrage de mail en spam et non spam, nous avons impl\'e9ment\'e9 3 mod\'e8les diff\'e9rents:\
+  - KNN\
+  - Clustering\
+  - Regression lineaire\
+  A l'issue de ces tests, nous pouvons voir que le mod\'e8le clustering n'est pas adapt\'e9 \'e0 ce probl\'e8me. En effet ca pr\'e9cision malgr\'e9 notre normalisation \
+  des donn\'e9es et l'emploi d'un subset de la dataframe nous offre une pr\'e9cision maximale de 65%.\
+  Le mod\'e8le KNN r\'e9agit bien \'e0 la normalisation des donn\'e9es avec une pr\'e9cision de 91,19% contre 80% initialement.\
+  Nous avons r\'e9ussi \'e0 am\'e9liorer nos pr\'e9cisions pour la regression en effectuant un subset de la dataframe (suppression des colonnes dont le p_value > 0,05).\
+  Ainsi nous obtenons une pr\'e9cision pour la regression lin\'e9aire de 100%. Cette pr\'e9cision parfait peut s'expliquer par le fait que les donn\'e9es ont \'e9t\'e9 filtr\'e9 par\
+  l'utilisateur et que le mod\'e8le en question ne fonctionne que pour un utilisateur donn\'e9.\
+}
