@@ -1,0 +1,191 @@
+<!doctype html>
+
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="MariusHutson">
+
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+
+</head>
+
+<body>
+    <form class="container" action="http://127.0.0.1:5000/api/" method="POST" id="data_form">
+        
+            <div class="form-floating col-10" style="margin-top:50px">
+                <textarea class="form-control "   id="extrat_email_text" style="height: 100px;"></textarea>
+                <label for="extrat_email_text" style="width: 100px">Email</label>
+              </div>
+              <button type="button" id="extrat_email_btn" class="btn btn-primary" style="width:100px">Extract</button>
+              <div class="form-group row" id="form_container_features_word_freq">
+                  <h4>WORD Frequencies</h4>
+       </div>
+       <div class="form-group row" id="form_container_features_char_freq">
+        <h4>CHAR Frequencies</h4>
+        </div>
+        <div class="form-group row" id="form_container_features_capital_info">
+            <h4>CHAR Frequencies</h4>
+            </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <meta name="_token" content="${_csrf.token}"/>
+      </form>
+
+      <!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+   $(document).ready(function() {
+ var features_word_freq = ['make', 'address', 'all','3d', 'our',          
+'over','remove','internet','order','mail','receive',      
+'will', 'people','report','addresses','free','business',     
+'email', 'you', 'credit','your', 'font','000','money',        
+'hp', 'hpl','george','650','lab','labs', 'telnet',       
+'857','data','415','85','technology','1999', 'parts',        
+'pm','direct', 'cs','meeting','original','project',      
+'re','edu','table','conference']
+
+var features_char_freq = ['char_freq_comma','char_freq_parenthese','char_freq_bracket',            
+'char_freq_exclamation','char_freq_dollar','char_freq_hashtag'];
+
+var features_capital_info = ['capital_run_length_average','capital_run_length_longest','capital_run_length_total'];
+
+features_word_freq.forEach(element => $('#form_container_features_word_freq').append('<div class="col-3 row" style="margin:10px"> ' +
+         ' <label for="'+ element +'" class="col-6 col-form-label">'+ element +'</label>' +
+          '<div class="col-6">' +
+          '  <input type="number" step="any" min=0 max=1 class="form-control" id="'+ element +'" name="data[]" value=0>'+
+          '</div>'+
+       '</div>')
+       );
+
+       features_char_freq.forEach(element => $('#form_container_features_char_freq').append('<div class="col-3 row" style="margin:10px"> ' +
+         ' <label for="'+ element +'" class="col-6 col-form-label">'+ element +'</label>' +
+          '<div class="col-6">' +
+          '  <input type="number" step="any" min=0 max=1 class="form-control" id="'+ element +'" name="data[]" value=0>'+
+          '</div>'+
+       '</div>')
+       );
+
+       features_capital_info.forEach(element => $('#form_container_features_capital_info').append('<div class="col-5 row" style="margin:10px"> ' +
+         ' <label for="'+ element +'" class="col-6 col-form-label">'+ element +'</label>' +
+          '<div class="col-6">' +
+          '  <input type="number" step="any" class="form-control" id="'+ element +'" name="data[]" value=0>'+
+          '</div>'+
+       '</div>')
+       );
+       
+    
+    $('#extrat_email_btn').click(function (event){
+
+      var text = $('#extrat_email_text').val();
+    
+      var conversion = {'comma' : ';','parenthese': '(','bracket' : '[',            
+                        'exclamation' : '!','dollar' : '$','hashtag' : '#'};
+      features_char_freq.forEach(function (item){
+          var char = conversion[item.replace('char_freq_', '')];
+         
+         var nbr_occurences = text.match(new RegExp('['+ char +']+','g'));
+         if(nbr_occurences === null){
+            nbr_occurences = 0;
+         }
+         else{
+            nbr_occurences = nbr_occurences.length;
+         }
+         $('#' + item).val(nbr_occurences / text.length);
+       console.log();
+      });
+
+      const re_caps =new RegExp('[A-Z]+','g');
+      caps_text = text.match(re_caps);
+
+      if(caps_text === null)
+      {
+        $('#capital_run_length_average').val(0);
+        $('#capital_run_length_total').val(0);
+        $('#capital_run_length_longest').val(0);
+      }
+      else{
+      $('#capital_run_length_average').val(caps_text.join('').length / caps_text.length); 
+      $('#capital_run_length_total').val(caps_text.join('').length);
+      var longest = caps_text.reduce(
+            function (a, b) {
+                return a.length > b.length ? a : b;
+            });
+            console.log(longest);
+    $('#capital_run_length_longest').val(longest.length);
+    }
+
+ 
+      text = text.split(new RegExp('[^a-zA-Z0-9]'))
+      text = text.filter(function (el) {
+         return el != '';
+        });
+      text = text.map(word => word.toLowerCase());
+      var freq_count = {}
+      text.forEach(function(word) {
+        if(freq_count.hasOwnProperty(word)) {
+            freq_count[word] += 1;
+         }
+         else {
+            freq_count[word] = 1;
+         }
+      });
+ 
+      $.each(freq_count, function(key, val){  
+          var freq = val /  text.length;
+        freq_count[key] = freq;
+        $('#' + key).val(freq);
+    });
+     
+      console.log(text);
+      console.log(freq_count);
+    });
+
+
+    $("#data_form").submit(function (event) {
+                // Stop form from submitting normally
+                event.preventDefault();
+                var form = $(this);
+                var url = form.attr("action");
+
+                var data = [$("input[name='data[]']").map(function(){ 
+                    return parseInt(this.value); 
+                }).get()];
+                data = [[0,0.64,0.64,0,0.32,0,0,0,0,0,0,0.64,0,0,0,0.32,0,1.29,1.93,0,0.96,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.778,0,0,3.756,61,278]]
+                console.log(data[0].length);
+                data = JSON.stringify(data);
+                console.log(data.length);
+                var token = form.find("input[name='_token']").val();
+             
+                
+                $.ajaxSetup({
+                    headers: {
+                        'content-type': 'application/json', 
+                        'Accept-Charset': 'UTF-8',
+                        'X-CSRF-TOKEN': token
+                    }
+                });
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    dataType: "json",
+                    data: {data: data},
+                    success: function (res) {
+                            console.log(res);
+                     },
+                     error: function(err) {
+                        console.log(err);
+                     }
+                });
+            });
+   });
+
+</script>
+</body>
+</html>
